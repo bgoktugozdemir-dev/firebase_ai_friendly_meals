@@ -21,10 +21,7 @@ class HomeRecipeSection extends StatelessWidget {
           child: Column(
             spacing: 16,
             children: [
-              if (state.recipe?.image case final image?)
-                MemoryImageBuilder(imageBytes: image),
-              if (state.recipe?.description case final description?)
-                _RecipeDescription(data: description),
+              // TODO: Display recipe image and description
             ],
           ),
         );

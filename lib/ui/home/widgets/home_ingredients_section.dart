@@ -59,9 +59,8 @@ class _IngredientsTextField extends StatelessWidget {
       children: [
         SizedTextField(
           controller: controller,
-          onChanged: (value) {
-            context.read<HomeCubit>().onIngredientsChanged(value);
-          },
+          onChanged: (value) =>
+              context.read<HomeCubit>().onIngredientsChanged(value),
           hintText: 'Enter your list of ingredients',
           enabled: !isLoading,
         ),
@@ -111,7 +110,7 @@ class _GenerateButton extends StatelessWidget {
   }
 
   void _onPressed(BuildContext context) {
-    context.read<HomeCubit>().onGenerateRecipe();
+    // TODO: Call the cubit to generate the recipe
   }
 }
 

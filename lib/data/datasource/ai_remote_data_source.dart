@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 import 'package:firebase_ai/firebase_ai.dart';
-import 'package:firebase_ai_friendly_meals/injection.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
@@ -15,61 +14,18 @@ class AIRemoteDataSource {
        _imagenModel = imagenModel;
 
   Future<String> generateIngredients(Uint8List image) async {
-    const prompt =
-        "Please analyze this image and list all visible food ingredients. "
-        "Format the response as a comma-separated list of ingredients. "
-        "Be specific with measurements where possible, "
-        "but focus on identifying the ingredients accurately.";
-
-    final response = await _generativeModel.generateContent([
-      Content.multi(
-        [
-          InlineDataPart('image/png', image),
-          TextPart(prompt),
-        ],
-      ),
-    ]);
-
-    if (response.text == null) {
-      throw Exception('Failed to generate ingredients');
-    }
-
-    return response.text!;
+    // TODO: Call generative model with multimodal prompt to extract ingredients from image
+    return '';
   }
 
   Future<String> generateRecipe(String ingredients, String notes) async {
-    String prompt =
-        "Based on this ingredients list: $ingredients, please give me one recipe.";
-    if (notes.isNotEmpty) {
-      prompt += " Please take in consideration these notes: $notes.";
-    }
-
-    final response = await _generativeModel.generateContent([
-      Content.text(prompt),
-    ]);
-
-    if (response.text == null) {
-      throw Exception('Failed to generate recipe');
-    }
-
-    return response.text!;
+    // TODO: call generative model to generate recipe
+    return '';
   }
 
   Future<Uint8List> generateRecipeImage(String recipe) async {
-    final prompt =
-        "A professional food photography shot of this recipe: $recipe. "
-        "Style: High-end food photography, restaurant-quality plating, soft natural "
-        "lighting, on a clean background, showing the complete plated dish.";
-
-    final imageResponse = await _imagenModel.generateImages(prompt);
-
-    if (imageResponse.images.isNotEmpty) {
-      // TODO: Convert the image to bytes properly
-      return imageResponse.images.first.bytesBase64Encoded;
-    }
-
-    // Return empty bytes if no image generated
-    throw Exception('Failed to generate recipe image');
+    // TODO: Call Imagen model to generate recipe photo
+    return Uint8List(0);
   }
 }
 
@@ -79,32 +35,13 @@ abstract class FirebaseModule {
 
   @singleton
   GenerativeModel provideGenerativeModel() {
-    const model = 'gemini-2.0-flash';
-
-    return FirebaseAI.googleAI().generativeModel(
-      model: model,
-    );
+    // TODO: Creating the generative model instance
+    throw UnimplementedError();
   }
 
   @singleton
   ImagenModel provideImagenModel() {
-    const model = 'imagen-3.0-generate-002';
-
-    final generationConfig = ImagenGenerationConfig(
-      numberOfImages: 1,
-      aspectRatio: ImagenAspectRatio.square1x1,
-      imageFormat: ImagenFormat.png(),
-    );
-
-    final safetySettings = ImagenSafetySettings(
-      ImagenSafetyFilterLevel.blockLowAndAbove,
-      ImagenPersonFilterLevel.blockAll,
-    );
-
-    return FirebaseAI.googleAI().imagenModel(
-      model: model,
-      generationConfig: generationConfig,
-      safetySettings: safetySettings,
-    );
+    // TODO: Creating the imagen model instance
+    throw UnimplementedError();
   }
 }
