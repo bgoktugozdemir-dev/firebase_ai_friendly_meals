@@ -142,7 +142,6 @@ class _CameraIconOverlay extends StatelessWidget {
     if (image != null) {
       final bytes = await image.readAsBytes();
       cubit.onImageSelected(bytes);
-      // Trigger ingredient generation from the captured image
       await cubit.onGenerateIngredients();
     }
   }
