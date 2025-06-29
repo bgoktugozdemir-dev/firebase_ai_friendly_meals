@@ -1,6 +1,6 @@
 import 'dart:typed_data';
+
 import 'package:firebase_ai/firebase_ai.dart';
-import 'package:firebase_ai_friendly_meals/injection.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
@@ -64,7 +64,6 @@ class AIRemoteDataSource {
     final imageResponse = await _imagenModel.generateImages(prompt);
 
     if (imageResponse.images.isNotEmpty) {
-      // TODO: Convert the image to bytes properly
       return imageResponse.images.first.bytesBase64Encoded;
     }
 
