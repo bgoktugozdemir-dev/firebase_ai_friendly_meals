@@ -3,6 +3,7 @@ import 'package:firebase_ai_friendly_meals/core/widgets/sized_text_field.dart';
 import 'package:firebase_ai_friendly_meals/ui/home/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 class HomeIngredientsBox extends StatelessWidget {
   const HomeIngredientsBox({
@@ -16,7 +17,14 @@ class HomeIngredientsBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(
+    return BlocConsumer<HomeCubit, HomeState>(
+      listenWhen: (previous, current) =>
+          previous.ingredients != current.ingredients ||
+          previous.status != current.status,
+      listener: (context, state) {
+        ingredientsController.text = state.ingredients;
+        notesController.text = state.notes;
+      },
       buildWhen: (previous, current) => previous.status != current.status,
       builder: (context, state) {
         return BorderedCard(
@@ -44,19 +52,21 @@ class _IngredientsTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.read<HomeCubit>().state;
+    final ingredients = state.ingredients;
     final isLoading = state.status.isLoading;
 
     return Stack(
       children: [
         SizedTextField(
           controller: controller,
-          onChanged: (value) =>
-              context.read<HomeCubit>().onIngredientsChanged(value),
+          onChanged: (value) {
+            context.read<HomeCubit>().onIngredientsChanged(value);
+          },
           hintText: 'Enter your list of ingredients',
           enabled: !isLoading,
         ),
 
-        if (state.ingredients.isEmpty)
+        if (ingredients.isEmpty)
           _CameraIconOverlay(
             isEnabled: !isLoading,
           ),
@@ -125,12 +135,16 @@ class _CameraIconOverlay extends StatelessWidget {
     );
   }
 
-  void _onCameraPressed(BuildContext context) {
-    // TODO: Implement camera functionality
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Camera functionality to be implemented'),
-      ),
-    );
+  Future<void> _onCameraPressed(BuildContext context) async {
+    final cubit = context.read<HomeCubit>();
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.camera);
+
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      cubit.onImageSelected(bytes);
+      // Trigger ingredient generation from the captured image
+      await cubit.onGenerateIngredients();
+    }
   }
 }

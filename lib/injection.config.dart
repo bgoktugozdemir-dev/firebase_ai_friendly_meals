@@ -25,11 +25,16 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final firebaseModule = _$FirebaseModule();
-    gh.factory<_i601.AIRemoteDataSource>(() => _i601.AIRemoteDataSource());
     gh.singleton<_i187.GenerativeModel>(
       () => firebaseModule.provideGenerativeModel(),
     );
     gh.singleton<_i187.ImagenModel>(() => firebaseModule.provideImagenModel());
+    gh.factory<_i601.AIRemoteDataSource>(
+      () => _i601.AIRemoteDataSource(
+        generativeModel: gh<_i187.GenerativeModel>(),
+        imagenModel: gh<_i187.ImagenModel>(),
+      ),
+    );
     gh.factory<_i2.AIRepository>(
       () => _i2.AIRepository(gh<_i601.AIRemoteDataSource>()),
     );

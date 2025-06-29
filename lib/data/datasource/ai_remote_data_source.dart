@@ -8,9 +8,11 @@ class AIRemoteDataSource {
   final GenerativeModel _generativeModel;
   final ImagenModel _imagenModel;
 
-  AIRemoteDataSource()
-    : _generativeModel = getIt<GenerativeModel>(),
-      _imagenModel = getIt<ImagenModel>();
+  AIRemoteDataSource({
+    required GenerativeModel generativeModel,
+    required ImagenModel imagenModel,
+  }) : _generativeModel = generativeModel,
+       _imagenModel = imagenModel;
 
   Future<String> generateIngredients(Uint8List image) async {
     const prompt =
