@@ -10,6 +10,8 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:firebase_ai/firebase_ai.dart' as _i187;
+import 'package:firebase_ai_friendly_meals/core/di/firebase_module.dart'
+    as _i890;
 import 'package:firebase_ai_friendly_meals/data/datasource/ai_remote_data_source.dart'
     as _i601;
 import 'package:firebase_ai_friendly_meals/data/repository/ai_repository.dart'
@@ -42,4 +44,4 @@ extension GetItInjectableX on _i174.GetIt {
   }
 }
 
-class _$FirebaseModule extends _i601.FirebaseModule {}
+class _$FirebaseModule extends _i890.FirebaseModule {}

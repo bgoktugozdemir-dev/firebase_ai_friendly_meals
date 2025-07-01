@@ -29,20 +29,3 @@ class AIRemoteDataSource {
     return Uint8List(0);
   }
 }
-
-@module
-abstract class FirebaseModule {
-  /// You can find the models here: https://ai.google.dev/gemini-api/docs/models
-
-  @singleton
-  GenerativeModel provideGenerativeModel() {
-    // TODO: Creating the generative model instance
-    throw UnimplementedError();
-  }
-
-  @singleton
-  ImagenModel provideImagenModel() {
-    // TODO: Creating the imagen model instance
-    throw UnimplementedError();
-  }
-}

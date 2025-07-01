@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:firebase_ai_friendly_meals/core/exceptions/ai_exceptions.dart';
 import 'package:firebase_ai_friendly_meals/data/model/recipe.dart';
 import 'package:firebase_ai_friendly_meals/data/repository/ai_repository.dart';
 import 'package:firebase_ai_friendly_meals/injection.dart';
@@ -19,6 +20,8 @@ class HomeCubit extends Cubit<HomeState> {
     emit(
       state.copyWith(
         ingredients: ingredients,
+        errorMessage: () => null,
+        status: HomeViewState.initial,
       ),
     );
   }
@@ -27,6 +30,8 @@ class HomeCubit extends Cubit<HomeState> {
     emit(
       state.copyWith(
         notes: notes,
+        errorMessage: () => null,
+        status: HomeViewState.initial,
       ),
     );
   }
@@ -35,6 +40,8 @@ class HomeCubit extends Cubit<HomeState> {
     emit(
       state.copyWith(
         selectedImage: () => image,
+        errorMessage: () => null,
+        status: HomeViewState.initial,
       ),
     );
   }
@@ -47,6 +54,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(
       state.copyWith(
         status: HomeViewState.loading,
+        errorMessage: () => null,
       ),
     );
 
@@ -61,29 +69,53 @@ class HomeCubit extends Cubit<HomeState> {
           status: HomeViewState.success,
         ),
       );
+    } on AIException catch (e) {
+      emit(
+        state.copyWith(
+          status: HomeViewState.failure,
+          errorMessage: () => _getErrorMessage(e),
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
           status: HomeViewState.failure,
+          errorMessage: () => 'An unexpected error occurred. Please try again.',
         ),
       );
     }
   }
 
   Future<void> onGenerateRecipe() async {
-    if (state.ingredients.isEmpty) {
-      throw Exception('No ingredients provided');
+    if (state.ingredients.trim().isEmpty) {
+      emit(
+        state.copyWith(
+          status: HomeViewState.failure,
+          errorMessage: () => 'Please add some ingredients first',
+        ),
+      );
+      return;
     }
 
     emit(
-      HomeState(
-        ingredients: state.ingredients,
-        notes: state.notes,
-        selectedImage: state.selectedImage,
+      state.copyWith(
         status: HomeViewState.loading,
+        errorMessage: () => null,
       ),
     );
 
     // TODO: Call the repository to generate the recipe
+  }
+
+  String _getErrorMessage(AIException exception) {
+    return switch (exception) {
+      ValidationException _ => exception.message,
+      ImageAnalysisException _ =>
+        'Could not analyze the image. Please try with a clearer photo.',
+      AIGenerationException _ =>
+        'Failed to generate content. Please try again.',
+      NetworkException _ =>
+        'Network error. Please check your connection and try again.',
+    };
   }
 }
