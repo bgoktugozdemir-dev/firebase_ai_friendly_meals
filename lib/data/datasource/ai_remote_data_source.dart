@@ -62,13 +62,13 @@ class AIRemoteDataSource {
         "lighting, on a clean background, showing the complete plated dish.";
 
     final imageResponse = await _imagenModel.generateImages(prompt);
+    final images = imageResponse.images;
 
-    if (imageResponse.images.isNotEmpty) {
-      return imageResponse.images.first.bytesBase64Encoded;
+    if (images.isEmpty) {
+      throw Exception('Failed to generate recipe image');
     }
 
-    // Return empty bytes if no image generated
-    throw Exception('Failed to generate recipe image');
+    return images.first.bytesBase64Encoded;
   }
 }
 
