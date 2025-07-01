@@ -86,18 +86,14 @@ class HomeCubit extends Cubit<HomeState> {
     );
 
     try {
-      final [
-        String recipeDescription,
-        Uint8List recipeImage,
-      ] = await Future.wait<dynamic>([
-        _aiRepository.generateRecipe(
-          state.ingredients,
-          state.notes,
-        ),
-        _aiRepository.generateRecipeImage(
-          state.ingredients,
-        ),
-      ]);
+      final recipeDescription = await _aiRepository.generateRecipe(
+        state.ingredients,
+        state.notes,
+      );
+
+      final recipeImage = await _aiRepository.generateRecipeImage(
+        recipeDescription,
+      );
 
       final recipe = Recipe(
         description: recipeDescription,
