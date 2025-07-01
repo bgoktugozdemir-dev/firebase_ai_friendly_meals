@@ -25,7 +25,9 @@ class HomeIngredientsBox extends StatelessWidget {
         ingredientsController.text = state.ingredients;
         notesController.text = state.notes;
       },
-      buildWhen: (previous, current) => previous.status != current.status,
+      buildWhen: (previous, current) =>
+          previous.status != current.status ||
+          previous.ingredients != current.ingredients,
       builder: (context, state) {
         return BorderedCard(
           isLoading: state.status.isLoading,
@@ -59,8 +61,9 @@ class _IngredientsTextField extends StatelessWidget {
       children: [
         SizedTextField(
           controller: controller,
-          onChanged: (value) =>
-              context.read<HomeCubit>().onIngredientsChanged(value),
+          onChanged: (value) {
+            context.read<HomeCubit>().onIngredientsChanged(value);
+          },
           hintText: 'Enter your list of ingredients',
           enabled: !isLoading,
         ),
@@ -110,7 +113,7 @@ class _GenerateButton extends StatelessWidget {
   }
 
   void _onPressed(BuildContext context) {
-    // TODO: Call the cubit to generate the recipe
+    context.read<HomeCubit>().onGenerateRecipe();
   }
 }
 

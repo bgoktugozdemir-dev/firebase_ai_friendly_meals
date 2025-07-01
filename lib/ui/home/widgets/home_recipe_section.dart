@@ -17,12 +17,18 @@ class HomeRecipeSection extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        return BorderedCard(
-          child: Column(
-            spacing: 16,
-            children: [
-              // TODO: Display recipe image and description
-            ],
+        return Padding(
+          padding: const EdgeInsets.only(top: 16),
+          child: BorderedCard(
+            child: Column(
+              spacing: 16,
+              children: [
+                if (state.recipe?.image case final image?)
+                  MemoryImageBuilder(imageBytes: image),
+                if (state.recipe?.description case final description?)
+                  _RecipeDescription(data: description),
+              ],
+            ),
           ),
         );
       },

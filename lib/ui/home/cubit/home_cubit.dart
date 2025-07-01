@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:firebase_ai_friendly_meals/data/model/recipe.dart';
 import 'package:firebase_ai_friendly_meals/data/repository/ai_repository.dart';
 import 'package:firebase_ai_friendly_meals/injection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'home_state.dart';
@@ -35,7 +36,7 @@ class HomeCubit extends Cubit<HomeState> {
   void onImageSelected(Uint8List image) {
     emit(
       state.copyWith(
-        selectedImage: image,
+        selectedImage: () => image,
       ),
     );
   }

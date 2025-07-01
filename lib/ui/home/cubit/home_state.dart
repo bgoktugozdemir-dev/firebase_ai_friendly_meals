@@ -7,6 +7,7 @@ enum HomeViewState {
   failure;
 
   bool get isLoading => this == loading;
+  bool get isFailure => this == failure;
 }
 
 final class HomeState extends Equatable {
@@ -16,6 +17,7 @@ final class HomeState extends Equatable {
     this.selectedImage,
     this.recipe,
     this.status = HomeViewState.initial,
+    this.errorMessage,
   });
 
   final String ingredients;
@@ -23,20 +25,25 @@ final class HomeState extends Equatable {
   final Uint8List? selectedImage;
   final Recipe? recipe;
   final HomeViewState status;
+  final String? errorMessage;
 
   HomeState copyWith({
     String? ingredients,
     String? notes,
-    Uint8List? selectedImage,
-    Recipe? recipe,
+    ValueGetter<Uint8List?>? selectedImage,
+    ValueGetter<Recipe?>? recipe,
     HomeViewState? status,
+    ValueGetter<String?>? errorMessage,
   }) {
     return HomeState(
       ingredients: ingredients ?? this.ingredients,
       notes: notes ?? this.notes,
-      selectedImage: selectedImage ?? this.selectedImage,
-      recipe: recipe ?? this.recipe,
+      selectedImage: selectedImage != null
+          ? selectedImage()
+          : this.selectedImage,
+      recipe: recipe != null ? recipe() : this.recipe,
       status: status ?? this.status,
+      errorMessage: errorMessage != null ? errorMessage() : this.errorMessage,
     );
   }
 
@@ -47,5 +54,6 @@ final class HomeState extends Equatable {
     selectedImage,
     recipe,
     status,
+    errorMessage,
   ];
 }
