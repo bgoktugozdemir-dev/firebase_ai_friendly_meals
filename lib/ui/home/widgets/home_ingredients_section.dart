@@ -25,7 +25,9 @@ class HomeIngredientsBox extends StatelessWidget {
         ingredientsController.text = state.ingredients;
         notesController.text = state.notes;
       },
-      buildWhen: (previous, current) => previous.status != current.status,
+      buildWhen: (previous, current) =>
+          previous.status != current.status ||
+          previous.ingredients != current.ingredients,
       builder: (context, state) {
         return BorderedCard(
           isLoading: state.status.isLoading,

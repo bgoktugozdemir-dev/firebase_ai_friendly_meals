@@ -1,3 +1,4 @@
+import 'package:firebase_ai_friendly_meals/core/widgets/error_banner.dart';
 import 'package:firebase_ai_friendly_meals/ui/home/cubit/home_cubit.dart';
 import 'package:firebase_ai_friendly_meals/ui/home/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -44,11 +45,24 @@ class __HomeScreenState extends State<_HomeScreen> {
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
-            spacing: 16,
             children: [
               HomeIngredientsBox(
                 ingredientsController: _ingredientsController,
                 notesController: _notesController,
+              ),
+              BlocBuilder<HomeCubit, HomeState>(
+                builder: (context, state) {
+                  if (state.status.isFailure && state.errorMessage != null) {
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 16),
+                      child: ErrorBanner(
+                        message: state.errorMessage!,
+                      ),
+                    );
+                  }
+
+                  return const SizedBox.shrink();
+                },
               ),
               const HomeRecipeSection(),
             ],

@@ -1,9 +1,9 @@
-import 'dart:typed_data';
-
 import 'package:equatable/equatable.dart';
+import 'package:firebase_ai_friendly_meals/core/exceptions/ai_exceptions.dart';
 import 'package:firebase_ai_friendly_meals/data/model/recipe.dart';
 import 'package:firebase_ai_friendly_meals/data/repository/ai_repository.dart';
 import 'package:firebase_ai_friendly_meals/injection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'home_state.dart';
@@ -20,6 +20,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(
       state.copyWith(
         ingredients: ingredients,
+        errorMessage: () => null,
       ),
     );
   }
@@ -28,6 +29,7 @@ class HomeCubit extends Cubit<HomeState> {
     emit(
       state.copyWith(
         notes: notes,
+        errorMessage: () => null,
       ),
     );
   }
@@ -35,19 +37,21 @@ class HomeCubit extends Cubit<HomeState> {
   void onImageSelected(Uint8List image) {
     emit(
       state.copyWith(
-        selectedImage: image,
+        selectedImage: () => image,
+        errorMessage: () => null,
       ),
     );
   }
 
   Future<void> onGenerateIngredients() async {
     if (state.selectedImage == null) {
-      throw Exception('No image selected');
+      return;
     }
 
     emit(
       state.copyWith(
         status: HomeViewState.loading,
+        errorMessage: () => null,
       ),
     );
 
@@ -60,28 +64,41 @@ class HomeCubit extends Cubit<HomeState> {
         state.copyWith(
           ingredients: ingredients,
           status: HomeViewState.success,
+          errorMessage: () => null,
+        ),
+      );
+    } on AIException catch (e) {
+      emit(
+        state.copyWith(
+          status: HomeViewState.failure,
+          errorMessage: () => _getErrorMessage(e),
         ),
       );
     } catch (e) {
       emit(
         state.copyWith(
           status: HomeViewState.failure,
+          errorMessage: () => 'An unexpected error occurred. Please try again.',
         ),
       );
     }
   }
 
   Future<void> onGenerateRecipe() async {
-    if (state.ingredients.isEmpty) {
-      throw Exception('No ingredients provided');
+    if (state.ingredients.trim().isEmpty) {
+      emit(
+        state.copyWith(
+          status: HomeViewState.failure,
+          errorMessage: () => 'Please add some ingredients first',
+        ),
+      );
+      return;
     }
 
     emit(
-      HomeState(
-        ingredients: state.ingredients,
-        notes: state.notes,
-        selectedImage: state.selectedImage,
+      state.copyWith(
         status: HomeViewState.loading,
+        errorMessage: () => null,
       ),
     );
 
@@ -101,16 +118,37 @@ class HomeCubit extends Cubit<HomeState> {
       );
       emit(
         state.copyWith(
-          recipe: recipe,
+          recipe: () => recipe,
           status: HomeViewState.success,
+          errorMessage: () => null,
+        ),
+      );
+    } on AIException catch (e) {
+      emit(
+        state.copyWith(
+          status: HomeViewState.failure,
+          errorMessage: () => _getErrorMessage(e),
         ),
       );
     } catch (e) {
       emit(
         state.copyWith(
           status: HomeViewState.failure,
+          errorMessage: () => 'An unexpected error occurred. Please try again.',
         ),
       );
     }
+  }
+
+  String _getErrorMessage(AIException exception) {
+    return switch (exception) {
+      ValidationException _ => exception.message,
+      ImageAnalysisException _ =>
+        'Could not analyze the image. Please try with a clearer photo.',
+      AIGenerationException _ =>
+        'Failed to generate content. Please try again.',
+      NetworkException _ =>
+        'Network error. Please check your connection and try again.',
+    };
   }
 }
