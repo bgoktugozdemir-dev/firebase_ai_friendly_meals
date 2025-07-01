@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:equatable/equatable.dart';
 import 'package:firebase_ai_friendly_meals/data/model/recipe.dart';
 import 'package:firebase_ai_friendly_meals/data/repository/ai_repository.dart';
