@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:firebase_ai/firebase_ai.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
@@ -73,14 +74,19 @@ class AIRemoteDataSource {
 }
 
 @module
+/// You can find the models here: https://ai.google.dev/gemini-api/docs/models
 abstract class FirebaseModule {
-  /// You can find the models here: https://ai.google.dev/gemini-api/docs/models
+  @preResolve
+  @singleton
+  FirebaseAI get _googleAI => FirebaseAI.googleAI(
+    appCheck: FirebaseAppCheck.instance,
+  );
 
   @singleton
   GenerativeModel provideGenerativeModel() {
     const model = 'gemini-2.0-flash';
 
-    return FirebaseAI.googleAI().generativeModel(
+    return _googleAI.generativeModel(
       model: model,
     );
   }
@@ -100,7 +106,7 @@ abstract class FirebaseModule {
       ImagenPersonFilterLevel.blockAll,
     );
 
-    return FirebaseAI.googleAI().imagenModel(
+    return _googleAI.imagenModel(
       model: model,
       generationConfig: generationConfig,
       safetySettings: safetySettings,

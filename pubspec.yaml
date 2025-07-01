@@ -33,8 +33,9 @@ dependencies:
     sdk: flutter
 
   # Firebase
-  firebase_core: ^3.14.0
-  firebase_ai: ^2.1.0
+  firebase_core: ^3.15.0
+  firebase_ai: ^2.2.0
+  firebase_app_check: ^0.3.2+8
 
   # State Management & Architecture
   flutter_bloc: ^9.1.1
