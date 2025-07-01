@@ -37,15 +37,12 @@ dependencies:
   firebase_ai: ^2.2.0
   firebase_app_check: ^0.3.2+8
 
-  # State Management & Architecture
+  # State Management & Dependency Injection
   flutter_bloc: ^9.1.1
   equatable: ^2.0.7
   # Dependency Injection
   get_it: ^8.0.3
   injectable: ^2.5.0
-
-  # Network & Serialization
-  json_annotation: ^4.9.0
 
   # UI Components
   cupertino_icons: ^1.0.8
@@ -53,9 +50,6 @@ dependencies:
 
   # Image handling
   image_picker: ^1.1.2
-
-  # Utilities
-  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:
@@ -70,7 +64,6 @@ dev_dependencies:
 
   # Code generation
   build_runner: ^2.5.4
-  json_serializable: ^6.9.5
   injectable_generator: ^2.7.0
 
 # For information on the generic Dart part of this file, see the
