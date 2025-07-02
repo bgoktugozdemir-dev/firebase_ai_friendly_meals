@@ -61,7 +61,7 @@ class AIRemoteDataSource {
     String prompt =
         "Based on this ingredients list: $ingredients, please give me one recipe.";
     if (notes.isNotEmpty) {
-      prompt += " Please take in consideration these notes: $notes.";
+      prompt += " Please take into consideration these notes: $notes.";
     }
 
     try {
