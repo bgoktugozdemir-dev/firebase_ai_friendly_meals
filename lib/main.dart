@@ -11,6 +11,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // TODO: Activate Firebase App Check
   configureDependencies();
 
   runApp(const MyApp());

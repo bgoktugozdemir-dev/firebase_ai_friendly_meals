@@ -113,7 +113,7 @@ class _GenerateButton extends StatelessWidget {
   }
 
   void _onPressed(BuildContext context) {
-    context.read<HomeCubit>().onGenerateRecipe();
+    // TODO: Implement the generate recipe logic
   }
 }
 
