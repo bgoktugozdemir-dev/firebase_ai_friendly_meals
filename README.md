@@ -1,224 +1,496 @@
-# Firebase AI Friendly Meals - Flutter
+# Firebase AI Friendly Meals Workshop
 
-An AI-powered meal preparation app built with Flutter, Firebase AI, and modern architecture patterns. This project is based on the Android architecture from the [Firebase Extended Video Samples](https://github.com/FirebaseExtended/firebase-video-samples/tree/workshop/firebase-ai-logic-android/firebase-ai-friendly-meals/android).
+## Setting up your environment
 
-## Features
+1. Clone the repository:
 
-- 📸 **Image Analysis**: Take photos or select images of food ingredients
-- 🤖 **AI-Powered Ingredient Recognition**: Use Gemini to identify ingredients from images
-- 🍳 **Recipe Generation**: Generate recipes based on identified ingredients and user notes
-- 🎨 **Recipe Image Creation**: Generate professional food photography with Imagen
-- 📱 **Modern UI**: Clean, Material 3 design with responsive layout
-
-## Architecture
-
-This Flutter app follows the same architectural patterns as the Android project:
-
-### **Data Layer**
-```
-lib/data/
-├── datasource/
-│   └── ai_remote_data_source.dart     # AI API calls (Gemini & Imagen)
-├── repository/
-│   └── ai_repository.dart             # Repository pattern implementation
-└── model/
-    ├── recipe.dart                    # Recipe data model
-    └── home_view_state.dart           # UI state model
-```
-
-### **UI Layer**
-```
-lib/ui/
-└── home/
-    ├── home_screen.dart               # Main UI screen
-    ├── home_controller.dart           # State management (Riverpod)
-    └── home_providers.dart            # Dependency injection providers
-```
-
-### **Core Infrastructure**
-```
-lib/core/
-└── dependency_injection/
-    └── firebase_ai_module.dart        # DI for Firebase AI models
-```
-
-## Android vs Flutter Architecture Comparison
-
-| Component | Android (Kotlin) | Flutter (Dart) |
-|-----------|-----------------|----------------|
-| **State Management** | `HomeViewModel` + LiveData | `HomeController` + Riverpod |
-| **Dependency Injection** | Hilt + `@Inject` | GetIt + Injectable |
-| **UI Framework** | Jetpack Compose | Flutter Widgets |
-| **AI Integration** | Firebase AI SDK | Firebase AI Dart SDK |
-| **Architecture Pattern** | MVVM | MVVM with Riverpod |
-| **Data Models** | Data classes | Dart classes with copyWith |
-| **Repository Pattern** | `AIRepository` | `AIRepository` |
-| **Data Sources** | `AIRemoteDataSource` | `AIRemoteDataSource` |
-
-## Tech Stack
-
-### **Core Framework**
-- **Flutter**: Cross-platform UI framework
-- **Dart**: Programming language
-
-### **State Management & Architecture**
-- **Riverpod**: State management and dependency injection
-- **GetIt**: Service locator (secondary DI)
-- **Injectable**: Code generation for DI
-
-### **Firebase & AI**
-- **Firebase Core**: Firebase initialization
-- **Firebase AI**: Gemini and Imagen model access
-- **Image Picker**: Camera and gallery integration
-
-### **UI & Design**
-- **Material 3**: Modern Material Design
-- **Flutter Markdown**: Recipe formatting
-- **Cupertino Icons**: iOS-style icons
-
-## Getting Started
-
-### Prerequisites
-
-1. **Flutter SDK** (3.8.1 or later)
-2. **Firebase Project** with AI Logic enabled
-3. **Firebase AI API access** (Gemini Developer API or Vertex AI)
-
-### Setup
-
-1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd firebase_ai_friendly_meals
+   git clone https://github.com/bgoktugozdemir-dev/firebase_ai_friendly_meals.git
    ```
 
-2. **Install dependencies**
+2. Checkout the workshop branch:
+
    ```bash
-   flutter pub get
+   git checkout workshop
    ```
 
-3. **Configure Firebase**
-   - Add your `google-services.json` (Android) and `GoogleService-Info.plist` (iOS)
-   - Enable Firebase AI Logic in your Firebase project
-   - Set up API keys for Gemini and Imagen models
+3. Open the `firebase_ai_friendly_meals` folder in an IDE _(VSCode, Intellij, Android Studio)_.
 
-4. **Run the app**
+4. Open the [Firebase console](https://console.firebase.google.com).
+
+5. Click on **Create a Firebase project**, and then follow the on-screen instructions.
+
+## Configuring Firebase with Flutter
+
+1. If you haven't already, install the [Firebase CLI](https://firebase.google.com/docs/cli#setup_update_cli).
+
+2. Log into Firebase using your Google account by running the following command:
+
    ```bash
-   flutter run
+   firebase login
    ```
 
-## Project Structure Details
+3. Install the FlutterFire CLI by running the following command from any directory:
 
-### **Key Components**
+   ```bash
+   dart pub global activate flutterfire_cli
+   ```
 
-#### **AIRemoteDataSource**
-Handles direct API calls to Firebase AI services:
-- `generateIngredients()`: Multimodal Gemini call with image input
-- `generateRecipe()`: Text generation based on ingredients and notes
-- `generateRecipeImage()`: Imagen model for recipe photography
+4. Use the FlutterFire CLI to configure your Flutter apps to connect to Firebase:
+   ```bash
+   flutterfire configure
+   ```
 
-#### **AIRepository**
-Provides a clean interface for the UI layer, abstracting the data source implementation.
+## Creating the model instance
 
-#### **HomeController (StateNotifier)**
-Manages the home screen state including:
-- Image selection and preview
-- Ingredient loading states
-- Recipe generation workflow
-- Error handling
+In the [`ai_remote_data_source.dart`](lib/data/datasource/ai_remote_data_source.dart) file:
 
-#### **HomeScreen (UI)**
-Responsive UI with sections for:
-- Image capture/selection
-- Ingredients display
-- Notes input
-- Recipe generation
-- Results display
+1. Update the `_googleAI` getter.
 
-### **Firebase AI Integration**
+   Change this:
 
-The app uses Firebase AI Logic to access:
+   ```dart
+   @preResolve
+   @singleton
+   // TODO: Creating the Google AI instance
+   FirebaseAI get _googleAI => throw UnimplementedError();
+   ```
 
-- **Gemini Models**: For text generation and multimodal analysis
-- **Imagen Models**: For high-quality recipe image generation
+   To this:
+
+   ```dart
+   @preResolve
+   @singleton
+   FirebaseAI get _googleAI => FirebaseAI.googleAI();
+   ```
+
+2. Update the `provideGenerativeModel()` method.
+
+   Change this:
+
+   ```dart
+   @singleton
+   GenerativeModel provideGenerativeModel() {
+    // TODO: Creating the generative model instance
+    throw UnimplementedError();
+   }
+   ```
+
+   To this:
+
+   ```dart
+   @singleton
+   GenerativeModel provideGenerativeModel() {
+    const model = 'gemini-2.0-flash';
+
+    return _googleAI.generativeModel(
+      model: model,
+    );
+   }
+   ```
+
+3. Update the `provideImagenModel()` method.
+
+   Change this:
+
+   ```dart
+   @singleton
+   ImagenModel provideImagenModel() {
+    // TODO: Creating the imagen model instance
+    throw UnimplementedError();
+   }
+   ```
+
+   To this:
+
+   ```dart
+   @singleton
+   ImagenModel provideImagenModel() {
+    const model = 'imagen-3.0-generate-002';
+
+    final generationConfig = ImagenGenerationConfig(
+      numberOfImages: 1,
+      aspectRatio: ImagenAspectRatio.square1x1,
+      imageFormat: ImagenFormat.png(),
+    );
+
+    final safetySettings = ImagenSafetySettings(
+      ImagenSafetyFilterLevel.blockLowAndAbove,
+      ImagenPersonFilterLevel.blockAll,
+    );
+
+    return _googleAI.imagenModel(
+      model: model,
+      generationConfig: generationConfig,
+      safetySettings: safetySettings,
+    );
+   }
+   ```
+
+## Preparing the UI
+
+### 1. HomeIngredientsSection
+
+In the [`home_ingredients_section.dart`](lib/ui/home/widgets/home_ingredients_section.dart) file, implement the `onGenerateRecipe` logic.
+
+Change this:
 
 ```dart
-// Example Gemini call
-final response = await _generativeModel.generateContent([
-  Content.text(prompt)
-]);
-
-// Example Imagen call
-final imageResponse = await _imagenModel.generateImages(prompt);
+class _GenerateButton extends StatelessWidget {
+  // other UI elements
+  void _onPressed(BuildContext context) {
+    // TODO: Implement the generate recipe logic
+  }
+}
 ```
 
-## Development Workflow
+To this:
 
-### **Code Generation**
-Some features require code generation:
-```bash
-# Generate dependency injection code
-flutter packages pub run build_runner build
-
-# Watch for changes during development
-flutter packages pub run build_runner watch
+```dart
+class _GenerateButton extends StatelessWidget {
+  // other UI elements
+  void _onPressed(BuildContext context) {
+    context.read<HomeCubit>().onGenerateRecipe();
+  }
+}
 ```
 
-### **Adding New Features**
+### 2. HomeRecipeSection
 
-1. **Data Layer**: Add methods to `AIRemoteDataSource` and `AIRepository`
-2. **State Management**: Update `HomeController` and `HomeViewState`
-3. **UI**: Modify `HomeScreen` and add new providers if needed
-4. **DI**: Register new dependencies in the appropriate modules
+In the [`home_recipe_section.dart`](lib/ui/home/widgets/home_recipe_section.dart) file, display `MemoryImageBuilder` and `_RecipeDescription` widgets.
 
-## Comparison with Android Implementation
+Change this:
 
-This Flutter implementation maintains feature parity with the Android version while leveraging Flutter-specific patterns:
+```dart
+class HomeRecipeSection extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // other UI elements
+    return BorderedCard(
+      child: Column(
+        spacing: 16,
+        children: [
+          // TODO: display recipe image and description
+        ],
+      ),
+    );
+  }
+}
+```
 
-### **Similarities**
-- ✅ Same AI workflows (ingredient detection → recipe generation → image creation)
-- ✅ Repository pattern for data access
-- ✅ MVVM architecture with reactive state management
-- ✅ Dependency injection throughout
-- ✅ Error handling and loading states
+To this:
 
-### **Flutter-Specific Advantages**
-- 🚀 **Cross-platform**: Runs on iOS, Android, Web, and Desktop
-- 🎨 **Consistent UI**: Same design across all platforms
-- ⚡ **Hot Reload**: Faster development cycle
-- 📦 **Single Codebase**: Easier maintenance and feature development
+```dart
+class HomeRecipeSection extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // other UI elements
+    return BorderedCard(
+      child: Column(
+        spacing: 16,
+        children: [
+          if (state.recipe?.image case final image?)
+            MemoryImageBuilder(imageBytes: image),
+          if (state.recipe?.description case final description?)
+            _RecipeDescription(data: description),
+        ],
+      ),
+    );
+  }
+}
+```
 
-## Next Steps
+## Implementing the business logic
 
-### **TODO Items**
-- [ ] Implement actual Firebase AI API calls (currently placeholders)
-- [ ] Add image display and preview functionality
-- [ ] Implement error handling and user feedback
-- [ ] Add loading indicators and animations
-- [ ] Set up proper Firebase configuration
-- [ ] Add unit and integration tests
-- [ ] Implement offline capabilities
-- [ ] Add accessibility features
+In the [`home_cubit.dart`](lib/ui/home/cubit/home_cubit.dart) file, call the `generateRecipe()` and `generateRecipeImage()` from `_aiRepository`.
 
-### **Potential Enhancements**
-- 📊 **Analytics**: Track user behavior and AI usage
-- 💾 **Local Storage**: Save favorite recipes
-- 🔐 **Authentication**: User accounts and cloud sync
-- 🌍 **Internationalization**: Multi-language support
-- 📱 **Platform-specific features**: iOS Shortcuts, Android Widgets
+Change this:
 
-## Contributing
+```dart
+class HomeCubit extends Cubit<HomeState> {
+  Future<void> onGenerateRecipe() async {
+    // TODO: Call the repository to generate the recipe
+  }
+}
+```
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+To this:
 
-## License
+```dart
+class HomeCubit extends Cubit<HomeState> {
+  Future<void> onGenerateRecipe() async {
+    if (state.ingredients.trim().isEmpty) {
+      emit(
+        state.copyWith(
+          status: HomeViewState.failure,
+          errorMessage: () => 'Please add some ingredients first',
+        ),
+      );
+      return;
+    }
 
-This project is part of the Firebase Extended samples and follows the same licensing terms.
+    emit(
+      state.copyWith(
+        status: HomeViewState.loading,
+        errorMessage: () => null,
+      ),
+    );
 
----
+    try {
+      final recipeDescription = await _aiRepository.generateRecipe(
+        state.ingredients,
+        state.notes,
+      );
 
-**Built with ❤️ using Flutter and Firebase AI Logic**
+      final recipeImage = await _aiRepository.generateRecipeImage(
+        recipeDescription,
+      );
+
+      final recipe = Recipe(
+        description: recipeDescription,
+        image: recipeImage,
+      );
+      emit(
+        state.copyWith(
+          recipe: () => recipe,
+          status: HomeViewState.success,
+          errorMessage: () => null,
+        ),
+      );
+    } on AIException catch (e) {
+      emit(
+        state.copyWith(
+          status: HomeViewState.failure,
+          errorMessage: () => _getErrorMessage(e),
+        ),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          status: HomeViewState.failure,
+          errorMessage: () => 'An unexpected error occurred. Please try again.',
+        ),
+      );
+    }
+  }
+}
+```
+
+## Implementing the data layer
+
+In the [`ai_remote_data_source.dart`](lib/data/datasource/ai_remote_data_source.dart) file:
+
+1. Update the `generateIngredients()` method.
+
+   Change this:
+
+   ```dart
+   Future<String> generateIngredients(Uint8List image) async {
+    // TODO: Call generative model with multimodal prompt to extract ingredients from image
+    return '';
+   }
+   ```
+
+   To this:
+
+   ```dart
+   Future<String> generateIngredients(Uint8List image) async {
+    if (image.isEmpty) {
+      throw const ValidationException('Image data is empty');
+    }
+
+    const prompt =
+        "Please analyze this image and list all visible food ingredients. "
+        "Format the response as a comma-separated list of ingredients. "
+        "Be specific with measurements where possible, "
+        "but focus on identifying the ingredients accurately.";
+
+    try {
+      final response = await _generativeModel.generateContent([
+        Content.multi(
+          [
+            InlineDataPart('image/png', image),
+            TextPart(prompt),
+          ],
+        ),
+      ]);
+
+      if (response.text == null || response.text!.trim().isEmpty) {
+        throw const ImageAnalysisException(
+          'Failed to analyze image - no ingredients detected',
+        );
+      }
+
+      return response.text!;
+    } catch (e) {
+      if (e is AIException) {
+        rethrow;
+      }
+      throw ImageAnalysisException(
+        'Failed to generate ingredients: $e',
+      );
+    }
+   }
+   ```
+
+2. Update the `generateRecipe()` method.
+
+   Change this:
+
+   ```dart
+   Future<String> generateRecipe(String ingredients, String notes) async {
+    // TODO: call generative model to generate recipe
+    return '';
+   }
+   ```
+
+   To this:
+
+   ```dart
+   Future<String> generateRecipe(String ingredients, String notes) async {
+    if (ingredients.trim().isEmpty) {
+      throw const ValidationException('Ingredients list cannot be empty');
+    }
+
+    String prompt =
+        "Based on this ingredients list: $ingredients, please give me one recipe.";
+    if (notes.isNotEmpty) {
+      prompt += " Please take into consideration these notes: $notes.";
+    }
+
+    try {
+      final response = await _generativeModel.generateContent([
+        Content.text(prompt),
+      ]);
+
+      if (response.text == null || response.text!.trim().isEmpty) {
+        throw const AIGenerationException(
+          'Failed to generate recipe - empty response',
+        );
+      }
+
+      return response.text!;
+    } catch (e) {
+      if (e is AIException) {
+        rethrow;
+      }
+      throw AIGenerationException('Failed to generate recipe: $e');
+    }
+   }
+   ```
+
+3. Update the `generateRecipeImage()` method.
+
+   Change this:
+
+   ```dart
+   Future<Uint8List> generateRecipeImage(String recipe) async {
+    // TODO: Call Imagen model to generate recipe photo
+    return Uint8List(0);
+   }
+   ```
+
+   To this:
+
+   ```dart
+   Future<Uint8List> generateRecipeImage(String recipe) async {
+    if (recipe.trim().isEmpty) {
+      throw const ValidationException('Recipe description cannot be empty');
+    }
+
+    final prompt =
+        "A professional food photography shot of this recipe: $recipe. "
+        "Style: High-end food photography, restaurant-quality plating, soft natural "
+        "lighting, on a clean background, showing the complete plated dish.";
+
+    try {
+      final imageResponse = await _imagenModel.generateImages(prompt);
+      final images = imageResponse.images;
+
+      if (images.isEmpty) {
+        throw const AIGenerationException(
+          'Failed to generate recipe image - no images returned',
+        );
+      }
+
+      return images.first.bytesBase64Encoded;
+    } catch (e) {
+      if (e is AIException) {
+        rethrow;
+      }
+      throw AIGenerationException(
+        'Failed to generate recipe image: $e',
+      );
+    }
+   }
+   ```
+
+## Activating AppCheck
+
+1. Add [`firebase_app_check`](https://pub.dev/packages/firebase_app_check) package to the `dependencies` in the [`pubspec.yaml`](pubspec.yaml) file.
+
+   ```yaml
+   dependencies:
+     firebase_core: ^3.15.0
+     firebase_ai: ^2.2.0
+     firebase_app_check: ^0.3.2+8
+   ```
+
+2. In the [`main.dart`](lib/main.dart) file:
+
+   Change this:
+
+   ```dart
+    void main() async {
+        WidgetsFlutterBinding.ensureInitialized();
+
+        await Firebase.initializeApp(
+            options: DefaultFirebaseOptions.currentPlatform,
+        );
+        // TODO: Activate Firebase App Check
+        configureDependencies();
+
+        runApp(const MyApp());
+    }
+   ```
+
+   To this:
+
+   ```dart
+    void main() async {
+        WidgetsFlutterBinding.ensureInitialized();
+
+        await Firebase.initializeApp(
+            options: DefaultFirebaseOptions.currentPlatform,
+        );
+        await FirebaseAppCheck.instance.activate(
+            androidProvider: AndroidProvider.debug,
+            appleProvider: AppleProvider.debug,
+        );
+        configureDependencies();
+
+        runApp(const MyApp());
+    }
+   ```
+
+## Applying AppCheck to Firebase AI Logic
+
+In the [`firebase_module.dart`](lib/core/di/firebase_module.dart) file, update the `_googleAI` getter to use AppCheck.
+
+Change this:
+
+```dart
+@preResolve
+@singleton
+FirebaseAI get _googleAI => FirebaseAI.googleAI();
+```
+
+To this:
+
+```dart
+@preResolve
+@singleton
+FirebaseAI get _googleAI => FirebaseAI.googleAI(
+    appCheck: FirebaseAppCheck.instance,
+);
+```
