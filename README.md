@@ -43,7 +43,7 @@
 
 ## Creating the model instance
 
-In the [`ai_remote_data_source.dart`](lib/data/datasource/ai_remote_data_source.dart) file:
+In the [`firebase_module.dart`](lib/core/di/firebase_module.dart) file:
 
 1. Update the `_googleAI` getter.
 
@@ -427,7 +427,13 @@ In the [`ai_remote_data_source.dart`](lib/data/datasource/ai_remote_data_source.
 
 ## Activating AppCheck
 
-1. Add [`firebase_app_check`](https://pub.dev/packages/firebase_app_check) package to the `dependencies` in the [`pubspec.yaml`](pubspec.yaml) file.
+1. Open the [Firebase console](https://console.firebase.google.com). Choose your project. Click **Build** > **App Check**
+
+2. To activate App Check, click on **Get Started**
+
+3. For production, register apps.
+
+4. Add [`firebase_app_check`](https://pub.dev/packages/firebase_app_check) package to the `dependencies` in the [`pubspec.yaml`](pubspec.yaml) file.
 
    ```yaml
    dependencies:
@@ -436,7 +442,7 @@ In the [`ai_remote_data_source.dart`](lib/data/datasource/ai_remote_data_source.
      firebase_app_check: ^0.3.2+8
    ```
 
-2. In the [`main.dart`](lib/main.dart) file:
+5. In the [`main.dart`](lib/main.dart) file:
 
    Change this:
 
