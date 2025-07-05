@@ -1,6 +1,6 @@
 # Firebase AI Friendly Meals - Flutter
 
-An AI-powered meal preparation app built with Flutter, Firebase AI, and modern architecture patterns. This project is based on the Android architecture from the [Firebase Extended Video Samples](https://github.com/FirebaseExtended/firebase-video-samples/tree/workshop/firebase-ai-logic-android/firebase-ai-friendly-meals/android).
+An AI-powered meal preparation app built with Flutter, Firebase AI, and modern architecture patterns.
 
 ## Features
 
@@ -12,9 +12,10 @@ An AI-powered meal preparation app built with Flutter, Firebase AI, and modern a
 
 ## Architecture
 
-This Flutter app follows the same architectural patterns as the Android project:
+This Flutter app follows modern architectural patterns:
 
 ### **Data Layer**
+
 ```
 lib/data/
 ├── datasource/
@@ -22,87 +23,99 @@ lib/data/
 ├── repository/
 │   └── ai_repository.dart             # Repository pattern implementation
 └── model/
-    ├── recipe.dart                    # Recipe data model
-    └── home_view_state.dart           # UI state model
+    └── recipe.dart                    # Recipe data model
 ```
 
 ### **UI Layer**
+
 ```
 lib/ui/
 └── home/
-    ├── home_screen.dart               # Main UI screen
-    ├── home_controller.dart           # State management (Riverpod)
-    └── home_providers.dart            # Dependency injection providers
+    ├── home_page.dart                 # Main UI screen
+    ├── cubit/
+    │   ├── home_cubit.dart            # State management (BLoC/Cubit)
+    │   └── home_state.dart            # UI state definitions
+    └── widgets/
+        ├── home_ingredients_section.dart
+        ├── home_recipe_section.dart
+        └── widgets.dart
 ```
 
 ### **Core Infrastructure**
+
 ```
 lib/core/
-└── dependency_injection/
-    └── firebase_ai_module.dart        # DI for Firebase AI models
+├── di/
+│   └── firebase_module.dart           # DI for Firebase AI models
+├── exceptions/
+│   └── ai_exceptions.dart             # Custom exception classes
+├── theme/                             # App theming
+└── widgets/                           # Reusable UI components
 ```
-
-## Android vs Flutter Architecture Comparison
-
-| Component | Android (Kotlin) | Flutter (Dart) |
-|-----------|-----------------|----------------|
-| **State Management** | `HomeViewModel` + LiveData | `HomeController` + Riverpod |
-| **Dependency Injection** | Hilt + `@Inject` | GetIt + Injectable |
-| **UI Framework** | Jetpack Compose | Flutter Widgets |
-| **AI Integration** | Firebase AI SDK | Firebase AI Dart SDK |
-| **Architecture Pattern** | MVVM | MVVM with Riverpod |
-| **Data Models** | Data classes | Dart classes with copyWith |
-| **Repository Pattern** | `AIRepository` | `AIRepository` |
-| **Data Sources** | `AIRemoteDataSource` | `AIRemoteDataSource` |
 
 ## Tech Stack
 
 ### **Core Framework**
+
 - **Flutter**: Cross-platform UI framework
 - **Dart**: Programming language
 
 ### **State Management & Architecture**
-- **Riverpod**: State management and dependency injection
-- **GetIt**: Service locator (secondary DI)
+
+- **BLoC/Cubit**: State management pattern (`flutter_bloc`)
+- **Equatable**: Value equality for state classes
+- **GetIt**: Service locator for dependency injection
 - **Injectable**: Code generation for DI
 
 ### **Firebase & AI**
+
 - **Firebase Core**: Firebase initialization
 - **Firebase AI**: Gemini and Imagen model access
+- **Firebase App Check**: App verification and security
 - **Image Picker**: Camera and gallery integration
 
 ### **UI & Design**
+
 - **Material 3**: Modern Material Design
-- **Flutter Markdown**: Recipe formatting
+- **GPT Markdown**: Recipe content formatting
 - **Cupertino Icons**: iOS-style icons
 
 ## Getting Started
 
 ### Prerequisites
 
-1. **Flutter SDK** (3.8.1 or later)
+1. **Flutter SDK** (3.8.0 or later)
 2. **Firebase Project** with AI Logic enabled
 3. **Firebase AI API access** (Gemini Developer API or Vertex AI)
 
 ### Setup
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd firebase_ai_friendly_meals
    ```
 
 2. **Install dependencies**
+
    ```bash
    flutter pub get
    ```
 
-3. **Configure Firebase**
+3. **Generate dependency injection code**
+
+   ```bash
+   dart run build_runner build
+   ```
+
+4. **Configure Firebase**
+
    - Add your `google-services.json` (Android) and `GoogleService-Info.plist` (iOS)
    - Enable Firebase AI Logic in your Firebase project
    - Set up API keys for Gemini and Imagen models
 
-4. **Run the app**
+5. **Run the app**
    ```bash
    flutter run
    ```
@@ -112,23 +125,41 @@ lib/core/
 ### **Key Components**
 
 #### **AIRemoteDataSource**
+
 Handles direct API calls to Firebase AI services:
+
 - `generateIngredients()`: Multimodal Gemini call with image input
 - `generateRecipe()`: Text generation based on ingredients and notes
 - `generateRecipeImage()`: Imagen model for recipe photography
 
 #### **AIRepository**
+
 Provides a clean interface for the UI layer, abstracting the data source implementation.
 
-#### **HomeController (StateNotifier)**
-Manages the home screen state including:
+#### **HomeCubit (State Management)**
+
+Manages the home screen state using BLoC pattern:
+
 - Image selection and preview
 - Ingredient loading states
 - Recipe generation workflow
-- Error handling
+- Error handling and validation
 
-#### **HomeScreen (UI)**
+#### **HomeState**
+
+Immutable state class containing:
+
+- `ingredients`: Current ingredient list
+- `notes`: User-provided cooking notes
+- `selectedImage`: Selected image for analysis
+- `recipe`: Generated recipe result
+- `status`: Current view state (initial, loading, success, failure)
+- `errorMessage`: Error messages for user feedback
+
+#### **HomePage (UI)**
+
 Responsive UI with sections for:
+
 - Image capture/selection
 - Ingredients display
 - Notes input
@@ -155,57 +186,18 @@ final imageResponse = await _imagenModel.generateImages(prompt);
 ## Development Workflow
 
 ### **Code Generation**
+
 Some features require code generation:
+
 ```bash
 # Generate dependency injection code
-flutter packages pub run build_runner build
+dart run build_runner build
 
 # Watch for changes during development
-flutter packages pub run build_runner watch
+dart run build_runner watch
 ```
 
-### **Adding New Features**
-
-1. **Data Layer**: Add methods to `AIRemoteDataSource` and `AIRepository`
-2. **State Management**: Update `HomeController` and `HomeViewState`
-3. **UI**: Modify `HomeScreen` and add new providers if needed
-4. **DI**: Register new dependencies in the appropriate modules
-
-## Comparison with Android Implementation
-
-This Flutter implementation maintains feature parity with the Android version while leveraging Flutter-specific patterns:
-
-### **Similarities**
-- ✅ Same AI workflows (ingredient detection → recipe generation → image creation)
-- ✅ Repository pattern for data access
-- ✅ MVVM architecture with reactive state management
-- ✅ Dependency injection throughout
-- ✅ Error handling and loading states
-
-### **Flutter-Specific Advantages**
-- 🚀 **Cross-platform**: Runs on iOS, Android, Web, and Desktop
-- 🎨 **Consistent UI**: Same design across all platforms
-- ⚡ **Hot Reload**: Faster development cycle
-- 📦 **Single Codebase**: Easier maintenance and feature development
-
 ## Next Steps
-
-### **TODO Items**
-- [ ] Implement actual Firebase AI API calls (currently placeholders)
-- [ ] Add image display and preview functionality
-- [ ] Implement error handling and user feedback
-- [ ] Add loading indicators and animations
-- [ ] Set up proper Firebase configuration
-- [ ] Add unit and integration tests
-- [ ] Implement offline capabilities
-- [ ] Add accessibility features
-
-### **Potential Enhancements**
-- 📊 **Analytics**: Track user behavior and AI usage
-- 💾 **Local Storage**: Save favorite recipes
-- 🔐 **Authentication**: User accounts and cloud sync
-- 🌍 **Internationalization**: Multi-language support
-- 📱 **Platform-specific features**: iOS Shortcuts, Android Widgets
 
 ## Contributing
 
