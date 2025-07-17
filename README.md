@@ -1,5 +1,17 @@
 # Firebase AI Friendly Meals Workshop
 
+## Google AI Studio
+
+A web playground that lets you quickly experiment with Google's AI models
+[Google AI Studio](https://aistudio.google.com)
+
+```
+Based on this ingredients list:
+[TYPE YOUR LIST OF INGREDIENTS],
+please give me one recipe. Please take in consideration these notes:
+[TYPE YOUR NOTES, LIKE DIETARY RESTRICTIONS AND CUISINE PREFERENCES]
+```
+
 ## Setting up your environment
 
 1. Clone the repository:
