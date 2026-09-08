@@ -110,16 +110,13 @@ class HomeCubit extends Cubit<HomeState> {
         state.notes,
       );
 
-      final recipe = Recipe.fromJson(
-        jsonDecode(recipeJson) as Map<String, dynamic>,
-      );
-
-      // final recipeImage = await _aiRepository.generateRecipeImage(
-      //   recipe.description,
-      // );
+      final recipeImage = await _aiRepository.generateRecipeImage(recipeJson);
       emit(
         state.copyWith(
-          recipe: () => recipe,
+          recipe: () => Recipe.fromJson(
+            jsonDecode(recipeJson),
+            image: recipeImage,
+          ),
           status: HomeViewState.success,
           errorMessage: () => null,
         ),
@@ -140,8 +137,6 @@ class HomeCubit extends Cubit<HomeState> {
       );
       return;
     }
-
-    // TODO: Call the repository to generate the recipe
   }
 
   String _getErrorMessage(AIException exception) {

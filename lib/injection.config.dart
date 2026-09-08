@@ -29,17 +29,27 @@ extension GetItInjectableX on _i174.GetIt {
     final firebaseModule = _$FirebaseModule();
     gh.singleton<_i187.FirebaseAI>(() => firebaseModule.firebaseAI);
     gh.singleton<_i187.GenerativeModel>(
-      () => firebaseModule.provideTextModel(gh<_i187.FirebaseAI>()),
-      instanceName: 'textModel',
+      () => firebaseModule.provideRecipeImageModel(gh<_i187.FirebaseAI>()),
+      instanceName: 'recipeImage',
     );
     gh.singleton<_i187.GenerativeModel>(
-      () => firebaseModule.provideImageModel(gh<_i187.FirebaseAI>()),
-      instanceName: 'imageModel',
+      () => firebaseModule.provideRecipeTextModel(gh<_i187.FirebaseAI>()),
+      instanceName: 'recipeText',
+    );
+    gh.singleton<_i187.GenerativeModel>(
+      () =>
+          firebaseModule.provideImageToIngredientsModel(gh<_i187.FirebaseAI>()),
+      instanceName: 'imageToIngredients',
     );
     gh.factory<_i601.AIRemoteDataSource>(
       () => _i601.AIRemoteDataSource(
-        generativeModel: gh<_i187.GenerativeModel>(instanceName: 'textModel'),
-        imagenModel: gh<_i187.GenerativeModel>(instanceName: 'imageModel'),
+        recipeTextModel: gh<_i187.GenerativeModel>(instanceName: 'recipeText'),
+        imageToIngredientsModel: gh<_i187.GenerativeModel>(
+          instanceName: 'imageToIngredients',
+        ),
+        recipeImageModel: gh<_i187.GenerativeModel>(
+          instanceName: 'recipeImage',
+        ),
       ),
     );
     gh.factory<_i2.AIRepository>(

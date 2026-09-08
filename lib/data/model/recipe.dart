@@ -35,7 +35,7 @@ class Recipe extends Equatable {
     this.image,
   });
 
-  factory Recipe.fromJson(Map<String, dynamic> json) {
+  factory Recipe.fromJson(Map<String, dynamic> json, {Uint8List? image}) {
     return Recipe(
       name: json['name'] as String,
       description: json['description'] as String,
@@ -54,6 +54,7 @@ class Recipe extends Equatable {
         json['nutrition'] as Map<String, dynamic>,
       ),
       tips: (json['tips'] as List<dynamic>?)?.cast<String>(),
+      image: image,
     );
   }
 

@@ -1,7 +1,7 @@
 /// Instance names for the AI model registrations declared in
 /// `firebase_module.dart`.
 ///
-/// Both models are registered as `GenerativeModel`, so get_it cannot tell them
+/// All three are registered as `GenerativeModel`, so get_it cannot tell them
 /// apart by type alone. Each registration is given a name here, and each
 /// injection site asks for it with `@Named(...)`.
 ///
@@ -10,6 +10,7 @@
 /// declared inside `FirebaseModule` would be registered as a `String`
 /// dependency — and two of them would collide.
 abstract final class ModelNames {
-  static const text = 'textModel';
-  static const image = 'imageModel';
+  static const recipeText = 'recipeText';
+  static const imageToIngredients = 'imageToIngredients';
+  static const recipeImage = 'recipeImage';
 }

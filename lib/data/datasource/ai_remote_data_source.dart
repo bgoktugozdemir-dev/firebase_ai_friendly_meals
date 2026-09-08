@@ -7,16 +7,18 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class AIRemoteDataSource {
-  final GenerativeModel _generativeModel;
-  final GenerativeModel _imagenModel;
+  final GenerativeModel _recipeTextModel;
+  final GenerativeModel _imageToIngredientsModel;
+  final GenerativeModel _recipeImageModel;
 
   AIRemoteDataSource({
-    @Named(ModelNames.text)
-    required GenerativeModel generativeModel,
-    @Named(ModelNames.image)
-    required GenerativeModel imagenModel,
-  }) : _generativeModel = generativeModel,
-       _imagenModel = imagenModel;
+    @Named(ModelNames.recipeText) required GenerativeModel recipeTextModel,
+    @Named(ModelNames.imageToIngredients)
+    required GenerativeModel imageToIngredientsModel,
+    @Named(ModelNames.recipeImage) required GenerativeModel recipeImageModel,
+  }) : _recipeTextModel = recipeTextModel,
+       _imageToIngredientsModel = imageToIngredientsModel,
+       _recipeImageModel = recipeImageModel;
 
   Future<String> generateIngredients(Uint8List image) async {
     if (image.isEmpty) {
@@ -30,11 +32,11 @@ class AIRemoteDataSource {
         "but focus on identifying the ingredients accurately.";
 
     try {
-      final response = await _generativeModel.generateContent([
+      final response = await _imageToIngredientsModel.generateContent([
         Content.multi(
           [
             InlineDataPart('image/png', image),
-            TextPart(prompt),
+            const TextPart(prompt),
           ],
         ),
       ]);
@@ -68,7 +70,7 @@ class AIRemoteDataSource {
     }
 
     try {
-      final response = await _generativeModel.generateContent([
+      final response = await _recipeTextModel.generateContent([
         Content.text(prompt),
       ]);
 
@@ -93,31 +95,21 @@ class AIRemoteDataSource {
     }
 
     final prompt =
-        "A professional food photography shot of this recipe: $recipe. "
+        "A professional food photography shot of this recipe object: $recipe. "
         "Style: High-end food photography, restaurant-quality plating, soft natural "
         "lighting, on a clean background, showing the complete plated dish.";
 
     try {
-      final imageResponse = await _imagenModel.generateContent([
+      final response = await _recipeImageModel.generateContent([
         Content.text(prompt),
       ]);
-      final images = imageResponse.candidates;
-
-      if (images.isEmpty) {
+      if (response.inlineDataParts.isEmpty) {
         throw const AIGenerationException(
           'Failed to generate recipe image - no images returned',
         );
       }
 
-      // if (images.first.content.parts. is !  || images.first.bytesBase64Encoded == null) {
-      //   throw const AIGenerationException(
-      //     'Failed to generate recipe image - empty image data',
-      //   );
-      // }
-
-      return Uint8List(0);
-
-      // return images.first.content.parts.map((e) => e.).toList();
+      return response.inlineDataParts.first.bytes;
     } catch (e) {
       if (e is AIException) {
         rethrow;

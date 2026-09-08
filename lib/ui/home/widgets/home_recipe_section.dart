@@ -3,11 +3,11 @@ import 'package:firebase_ai_friendly_meals/core/widgets/memory_image_builder.dar
 import 'package:firebase_ai_friendly_meals/data/model/recipe.dart';
 import 'package:firebase_ai_friendly_meals/ui/home/cubit/home_cubit.dart';
 import 'package:firebase_ai_friendly_meals/ui/home/widgets/recipe_widgets/home_recipe_description.dart';
+import 'package:firebase_ai_friendly_meals/ui/home/widgets/recipe_widgets/home_recipe_info_box.dart';
 import 'package:firebase_ai_friendly_meals/ui/home/widgets/recipe_widgets/home_recipe_ingredients.dart';
 import 'package:firebase_ai_friendly_meals/ui/home/widgets/recipe_widgets/home_recipe_instructions.dart';
 import 'package:firebase_ai_friendly_meals/ui/home/widgets/recipe_widgets/home_recipe_name.dart';
 import 'package:firebase_ai_friendly_meals/ui/home/widgets/recipe_widgets/home_recipe_nutrition_box.dart';
-import 'package:firebase_ai_friendly_meals/ui/home/widgets/recipe_widgets/home_recipe_info_box.dart';
 import 'package:firebase_ai_friendly_meals/ui/home/widgets/recipe_widgets/home_recipe_servings.dart';
 import 'package:firebase_ai_friendly_meals/ui/home/widgets/recipe_widgets/home_recipe_tips.dart';
 import 'package:flutter/material.dart';
