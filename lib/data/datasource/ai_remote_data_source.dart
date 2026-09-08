@@ -1,17 +1,20 @@
 import 'dart:typed_data';
 
 import 'package:firebase_ai/firebase_ai.dart';
+import 'package:firebase_ai_friendly_meals/core/di/model_names.dart';
 import 'package:firebase_ai_friendly_meals/core/exceptions/ai_exceptions.dart';
 import 'package:injectable/injectable.dart';
 
 @injectable
 class AIRemoteDataSource {
   final GenerativeModel _generativeModel;
-  final ImagenModel _imagenModel;
+  final GenerativeModel _imagenModel;
 
   AIRemoteDataSource({
+    @Named(ModelNames.text)
     required GenerativeModel generativeModel,
-    required ImagenModel imagenModel,
+    @Named(ModelNames.image)
+    required GenerativeModel imagenModel,
   }) : _generativeModel = generativeModel,
        _imagenModel = imagenModel;
 
@@ -95,8 +98,10 @@ class AIRemoteDataSource {
         "lighting, on a clean background, showing the complete plated dish.";
 
     try {
-      final imageResponse = await _imagenModel.generateImages(prompt);
-      final images = imageResponse.images;
+      final imageResponse = await _imagenModel.generateContent([
+        Content.text(prompt),
+      ]);
+      final images = imageResponse.candidates;
 
       if (images.isEmpty) {
         throw const AIGenerationException(
@@ -104,7 +109,15 @@ class AIRemoteDataSource {
         );
       }
 
-      return images.first.bytesBase64Encoded;
+      // if (images.first.content.parts. is !  || images.first.bytesBase64Encoded == null) {
+      //   throw const AIGenerationException(
+      //     'Failed to generate recipe image - empty image data',
+      //   );
+      // }
+
+      return Uint8List(0);
+
+      // return images.first.content.parts.map((e) => e.).toList();
     } catch (e) {
       if (e is AIException) {
         rethrow;

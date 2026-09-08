@@ -27,14 +27,19 @@ extension GetItInjectableX on _i174.GetIt {
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final firebaseModule = _$FirebaseModule();
+    gh.singleton<_i187.FirebaseAI>(() => firebaseModule.firebaseAI);
     gh.singleton<_i187.GenerativeModel>(
-      () => firebaseModule.provideGenerativeModel(),
+      () => firebaseModule.provideTextModel(gh<_i187.FirebaseAI>()),
+      instanceName: 'textModel',
     );
-    gh.singleton<_i187.ImagenModel>(() => firebaseModule.provideImagenModel());
+    gh.singleton<_i187.GenerativeModel>(
+      () => firebaseModule.provideImageModel(gh<_i187.FirebaseAI>()),
+      instanceName: 'imageModel',
+    );
     gh.factory<_i601.AIRemoteDataSource>(
       () => _i601.AIRemoteDataSource(
-        generativeModel: gh<_i187.GenerativeModel>(),
-        imagenModel: gh<_i187.ImagenModel>(),
+        generativeModel: gh<_i187.GenerativeModel>(instanceName: 'textModel'),
+        imagenModel: gh<_i187.GenerativeModel>(instanceName: 'imageModel'),
       ),
     );
     gh.factory<_i2.AIRepository>(

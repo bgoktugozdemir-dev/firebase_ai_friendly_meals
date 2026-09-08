@@ -12,9 +12,10 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  /// You can check [here](https://firebase.google.com/docs/app-check/flutter/debug-provider) for more info about App Check debug provider.
   await FirebaseAppCheck.instance.activate(
-    androidProvider: AndroidProvider.debug,
-    appleProvider: AppleProvider.debug,
+    providerAndroid: const AndroidDebugProvider(),
+    providerApple: const AppleDebugProvider(),
   );
   configureDependencies();
 
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
       title: 'Firebase AI Friendly Meals',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
+      debugShowCheckedModeBanner: false,
       home: const HomePage(),
     );
   }
