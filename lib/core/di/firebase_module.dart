@@ -71,7 +71,7 @@ abstract class FirebaseModule {
         ),
         "description": Schema.string(
           description:
-              'The description of the recipe. Give a detailed description of the recipe in markdown format.',
+              'The description of the recipe. Give a short description of the recipe in markdown format.',
         ),
         "numberOfServings": Schema.number(
           description: 'The number of servings the recipe makes.',
