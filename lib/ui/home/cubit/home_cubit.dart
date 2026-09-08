@@ -140,13 +140,6 @@ class HomeCubit extends Cubit<HomeState> {
       return;
     }
 
-    emit(
-      state.copyWith(
-        status: HomeViewState.loading,
-        errorMessage: () => null,
-      ),
-    );
-
     // TODO: Call the repository to generate the recipe
   }
 
