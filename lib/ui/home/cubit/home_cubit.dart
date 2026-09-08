@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:firebase_ai_friendly_meals/core/exceptions/ai_exceptions.dart';
 import 'package:firebase_ai_friendly_meals/data/model/recipe.dart';
@@ -103,19 +105,18 @@ class HomeCubit extends Cubit<HomeState> {
     );
 
     try {
-      final recipeDescription = await _aiRepository.generateRecipe(
+      final recipeJson = await _aiRepository.generateRecipe(
         state.ingredients,
         state.notes,
       );
 
-      final recipeImage = await _aiRepository.generateRecipeImage(
-        recipeDescription,
+      final recipe = Recipe.fromJson(
+        jsonDecode(recipeJson) as Map<String, dynamic>,
       );
 
-      final recipe = Recipe(
-        description: recipeDescription,
-        image: recipeImage,
-      );
+      // final recipeImage = await _aiRepository.generateRecipeImage(
+      //   recipe.description,
+      // );
       emit(
         state.copyWith(
           recipe: () => recipe,
@@ -148,8 +149,7 @@ class HomeCubit extends Cubit<HomeState> {
       ValidationException _ => exception.message,
       ImageAnalysisException _ =>
         'Could not analyze the image. Please try with a clearer photo.',
-      AIGenerationException _ =>
-        'Failed to generate content. Please try again.',
+      AIGenerationException _ => exception.message,
       NetworkException _ =>
         'Network error. Please check your connection and try again.',
     };
