@@ -37,36 +37,34 @@ class __HomeScreenState extends State<_HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 8,
-            vertical: 32,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              HomeIngredientsBox(
-                ingredientsController: _ingredientsController,
-                notesController: _notesController,
-              ),
-              BlocBuilder<HomeCubit, HomeState>(
-                builder: (context, state) {
-                  if (state.status.isFailure && state.errorMessage != null) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: ErrorBanner(
-                        message: state.errorMessage!,
-                      ),
-                    );
-                  }
-
-                  return const SizedBox.shrink();
-                },
-              ),
-              const HomeRecipeSection(),
-            ],
-          ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 8,
+          vertical: 32,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            HomeIngredientsBox(
+              ingredientsController: _ingredientsController,
+              notesController: _notesController,
+            ),
+            BlocBuilder<HomeCubit, HomeState>(
+              builder: (context, state) {
+                if (state.status.isFailure && state.errorMessage != null) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: ErrorBanner(
+                      message: state.errorMessage!,
+                    ),
+                  );
+                }
+      
+                return const SizedBox.shrink();
+              },
+            ),
+            const HomeRecipeSection(),
+          ],
         ),
       ),
     );
